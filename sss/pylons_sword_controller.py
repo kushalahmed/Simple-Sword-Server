@@ -165,7 +165,7 @@ class SwordController(WSGIController):
             #if len(webin) != 2: # if it is not multipart
                 # FIXME: this is reading everything in, and should be re-evaluated for performance/scalability
             # wsgi_input = request.environ['wsgi.input']
-            f = request.body_file
+            f = request.body_file_seekable
             f.seek(0, 0)
             
             # FIXME: can't we just look at the Content-Type header????
@@ -326,7 +326,7 @@ class SwordController(WSGIController):
             # for this section, we have to reset the file pointer in the body_file
             # part of the request back to the start, since it may have 
             # already been read once
-            f = request.body_file
+            f = request.body_file_seekable
             f.seek(0, 0)
             
             # if this wasn't a multipart, and isn't an empty request, then read the 
