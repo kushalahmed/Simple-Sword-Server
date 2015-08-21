@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os, hashlib, uuid, urllib
 from core import Statement, DepositResponse, MediaResourceResponse, DeleteResponse, Auth, AuthException, SwordError, ServiceDocument, SDCollection, EntryDocument, Authenticator, SwordServer, WebUI
 from spec import Namespaces, Errors
@@ -975,7 +976,7 @@ class DAO(object):
         self.configuration = config
 
         # first thing to do is create the store if it does not already exist
-        print self.configuration.store_dir
+        print(self.configuration.store_dir)
         if not os.path.exists(self.configuration.store_dir):
             os.makedirs(self.configuration.store_dir)
 

@@ -4,6 +4,7 @@ __version__ = "2.0"
 __author__ = ["Richard Jones <richard@cottagelabs.com>"]
 __license__ = "bsd"
 
+from __future__ import print_function
 import web, uuid, os, re, base64, hashlib, urllib, sys, logging, logging.config
 from lxml import etree
 from datetime import datetime
@@ -368,18 +369,18 @@ class Collection(SwordHttpHandler):
 
         # created, accepted, or error
         if result.created:
-            print cfg.rid + " Item created"
+            print(cfg.rid + " Item created")
             web.header("Content-Type", "application/atom+xml;type=entry")
             web.header("Location", result.location)
             web.ctx.status = "201 Created"
             if cfg.return_deposit_receipt:
-                print cfg.rid + " Returning deposit receipt"
+                print(cfg.rid + " Returning deposit receipt")
                 return result.receipt
             else:
-                print cfg.rid + " Omitting deposit receipt"
+                print(cfg.rid + " Omitting deposit receipt")
                 return
         else:
-            print cfg.rid + " Returning Error"
+            print(cfg.rid + " Returning Error")
             web.header("Content-Type", "text/xml")
             web.ctx.status = result.error_code
             return result.error
@@ -2899,7 +2900,7 @@ class DAO(object):
         self.configuration = global_configuration
 
         # first thing to do is create the store if it does not already exist
-        print self.configuration.store_dir
+        print(self.configuration.store_dir)
         if not os.path.exists(self.configuration.store_dir):
             os.makedirs(self.configuration.store_dir)
 

@@ -5,6 +5,12 @@ from spec import Namespaces
 from sss_logging import logging
 ssslog = logging.getLogger(__name__)
 
+try:
+    # Py2
+    basestring
+except NameError:
+    # Py3
+    basestring = str
 
 class DisseminationPackager(object):
     def __init__(self, dao, uri_manager):

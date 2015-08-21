@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os, uuid, sys, json
 from ingesters_disseminators import DefaultEntryIngester, DefaultDisseminator, FeedDisseminator, BinaryIngester, SimpleZipIngester, METSDSpaceIngester
 from negotiator import AcceptParameters, ContentType
@@ -310,8 +311,8 @@ if __name__ == "__main__":
     # if we are run from the command line, run validation over the
     # specified file
     if len(sys.argv) != 2:
-        print "Please supply a path to a file to validate"
+        print("Please supply a path to a file to validate")
         exit()
-    print "Validating Configuration File: " + sys.argv[1]
+    print("Validating Configuration File: " + sys.argv[1])
     c = Configuration(config_file=sys.argv[1])
-    print "File is valid"
+    print("File is valid")
