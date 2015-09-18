@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='Simple-Sword-Server',
+    name='SSS',
     version='2.0',
     description='Simple Sword Server',
     author='Richard Jones',
