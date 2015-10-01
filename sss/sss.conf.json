@@ -161,6 +161,7 @@
     # In this default configuration we use the built-in SSS repository's 
     # implementations for everything
     "sword_server" : "sss.repository.SSS",
+    "dao" : "sss.repository.DAO",
     "authenticator" : "sss.repository.SSSAuthenticator",
     "webui" : "sss.repository.WebInterface"
 }

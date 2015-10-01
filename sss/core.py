@@ -143,6 +143,149 @@ class Authenticator(object):
     def repoze_who_authenticate(self, identity, obo):
         raise NotImplementedError()
 
+class DAO(object):
+    """
+    Data Access Object for interacting with the store
+    """
+    def __init__(self, config):
+        """
+        Initialise the DAO and create the store directory in the Configuration() object if it does not already
+        exist along with the relevant collections.
+        """
+        raise NotImplementedError()
+
+    def get_collection_names(self):
+        """ list all the collections in the store """
+        raise NotImplementedError()
+
+    def collection_exists(self, collection):
+        """
+        Does the specified collection exist?
+        Args:
+        -collection:    the Collection name
+        Returns true or false
+        """
+        raise NotImplementedError()
+
+    def container_exists(self, collection, id):
+        """
+        Does the specified container exist?  If the collection does not exist this will still return and will return
+        false
+        Args:
+        -collection:    the Collection name
+        -id:    the container id
+        Returns true or false
+        """
+        raise NotImplementedError()
+
+    def file_exists(self, collection, id, filename):
+        raise NotImplementedError()
+
+    def create_container(self, collection, id=None):
+        """
+        Create a container in the specified collection.  The container will be assigned a random UUID as its
+        identifier.
+        Args:
+        -collection:    the collection name in which to create the container
+        Returns the ID of the container
+        """
+        # invent an identifier for the item, and create its directory
+        # we may have been passed an ID to use
+        raise NotImplementedError()
+
+    def save(self, filepath, content, opts="w"):
+        """
+        Shortcut to save the content to the filepath with the associated file handle opts (defaults to "w", so pass
+        in "wb" for binary files
+        """
+        raise NotImplementedError()
+
+    def get_filename(self, filename):
+        """
+        Create a timestamped file name to avoid name clashes in the store
+        """
+        raise NotImplementedError()
+
+    def store_atom(self, collection, id, atom):
+        """ Store the supplied atom document content in the object identified by the id in the specified collection """
+        raise NotImplementedError()
+
+    def store_content(self, collection, id, content, filename):
+        """
+        Store the supplied content in the object identified by the id in the specified collection under the supplied
+        filename.  In reality, to avoid name collisions the filename will be preceded with a timestamp in the store.
+        Returns the localised filename the content was stored under
+        """
+        raise NotImplementedError()
+
+    def store_statement(self, collection, id, statement):
+        """ Store the supplied statement document content in the object identified by the id in the specified collection """
+        # store the RDF version
+        raise NotImplementedError()
+
+    def store_deposit_receipt(self, collection, id, receipt):
+        """ Store the supplied receipt document content in the object identified by the id in the specified collection """
+        raise NotImplementedError()
+
+    def store_metadata(self, collection, id, metadata):
+        """ Store the supplied metadata dictionary in the object identified by the id in the specified collection """
+        raise NotImplementedError()
+
+    def get_metadata(self, collection, id):
+        raise NotImplementedError()
+
+    def remove_content(self, collection, id, keep_metadata=False, keep_atom=False):
+        """
+        Remove all the content from the specified container.  If keep_metadata is True then the sss_metadata.xml
+        file will not be removed
+        """
+        raise NotImplementedError()
+
+    def remove_container(self, collection, id):
+        """ Remove the specified container and all of its contents """
+        raise NotImplementedError()
+
+    def get_store_path(self, collection, id=None, filename=None):
+        """
+        Get the path to the specified filename in the store.  This is a utility method and should be used with care;
+        all content which goes into the store through the store_content method will have its filename localised to
+        avoid name clashes, so this method CANNOT be used to retrieve those files.  Instead, this should be used
+        internally to locate sss specific files in the container, and for packagers to write their own files into
+        the store which are not part of the content itself.
+        """
+        raise NotImplementedError()
+
+    def get_deposit_receipt_content(self, collection, id):
+        """ Read the deposit receipt for the specified container """
+        raise NotImplementedError()
+
+    def get_statement_content(self, collection, id):
+        """ Read the statement for the specified container """
+        raise NotImplementedError()
+
+    def get_statement_feed(self, collection, id):
+        """ Read the statement for the specified container """
+        raise NotImplementedError()
+
+    def get_atom_content(self, collection, id):
+        """ Read the statement for the specified container """
+        raise NotImplementedError()
+
+    def load_statement(self, collection, id):
+        """
+        Load the Statement object for the specified container
+        Returns a Statement object fully populated to represent this object
+        """
+        raise NotImplementedError()
+
+    def list_content(self, collection, id, exclude=[]):
+        """
+        List the contents of the specified container, excluding any files whose name exactly matches those in the
+        exclude list.  This method will also not list sss specific files, thus limiting it to the content files of
+        the object.
+        """
+        raise NotImplementedError()
+
 class EntryDocument(object):
 
     def __init__(self, atom_id=None, alternate_uri=None, content_uri=None, edit_uri=None, se_uri=None, em_uris=None,
