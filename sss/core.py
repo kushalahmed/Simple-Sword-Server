@@ -158,6 +158,10 @@ class DAO(object):
         """ list all the collections in the store """
         raise NotImplementedError()
 
+    def get_container_names(self, collection):
+        """ list all the containers in the collection """
+        raise NotImplementedError()
+
     def collection_exists(self, collection):
         """
         Does the specified collection exist?

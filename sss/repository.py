@@ -996,6 +996,9 @@ class DAO(object):
         """ list all the collections in the store """
         return os.listdir(self.configuration.store_dir)
 
+    def get_container_names(self, collection):
+        return os.listdir(self.get_store_path(collection))
+
     def collection_exists(self, collection):
         """
         Does the specified collection exist?
@@ -1240,10 +1243,8 @@ class CollectionPage(WebPage):
         frag = "<h1>Collection: " + id + "</h1>"
         
         # list all of the containers in the collection
-        cpath = self.dao.get_store_path(id)
-        containers = os.listdir(cpath)
         frag += "<h2>Containers</h2><ul>"
-        for container in containers:
+        for container in self.dao.get_container_names(id):
             frag += "<li><a href=\"" + self.um.html_url(id, container) + "\">" + container + "</a></li>"
         frag += "</ul>"
         
