@@ -1,7 +1,7 @@
 import os, uuid, sys, json
 from ingesters_disseminators import DefaultEntryIngester, DefaultDisseminator, FeedDisseminator, BinaryIngester, SimpleZipIngester, METSDSpaceIngester
 from negotiator import AcceptParameters, ContentType
-from core import SwordServer, Authenticator, DAO, WebUI
+from core import SwordServer, Authenticator, WebUI
 
 from sss_logging import logging
 ssslog = logging.getLogger(__name__)
@@ -171,9 +171,8 @@ DEFAULT_CONFIG = """
     # In this default configuration we use the built-in SSS repository's 
     # implementations for everything
     "sword_server" : "sss.repository.SSS",
-    "dao" : "sss.repository.DAO"
     "authenticator" : "sss.repository.SSSAuthenticator",
-    "webui" : "sss.repository.WebInterface",
+    "webui" : "sss.repository.WebInterface"
 }
 """
         
@@ -207,13 +206,7 @@ class Configuration(object):
             return self._get_class(self.authenticator)
         else:
             return Authenticator
-
-    def get_dao_implementation(self):
-        if self.dao is not None:
-            return self._get_class(self.dao)
-        else:
-            return DAO
-
+        
     def get_webui_implementation(self):
         if self.webui is not None:
             return self._get_class(self.webui)
@@ -303,7 +296,7 @@ class Configuration(object):
                 c+= "\n" # this makes it easier to debug the config
             else:
                 c += line
-        return json.loads(c.replace("\'", '"'))
+        return json.loads(c)
     
     def _create_config_file(self):
         fn = open(self.SSS_CONFIG_FILE, "w")

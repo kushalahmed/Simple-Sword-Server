@@ -10,7 +10,6 @@ from info import __version__
 from sss_logging import logging
 ssslog = logging.getLogger(__name__)
 
-
 class WebInterface(WebUI):
     def get(self, path=None):
         if path is not None:
@@ -147,8 +146,7 @@ class SSS(SwordServer):
         SwordServer.__init__(self, config, auth)
 
         # create a DAO for us to use
-        DAO = config.get_dao_implementation()
-        self.dao = DAO(config)
+        self.dao = DAO(self.configuration)
 
         # create a Namespace object for us to use
         self.ns = Namespaces()
@@ -1209,8 +1207,7 @@ class HomePage(WebPage):
     """
     def __init__(self, config):
         self.config = config
-        DAO = config.get_dao_implementation()
-        self.dao = DAO(config)
+        self.dao = DAO(self.config)
         self.um = URIManager(config)
         
     def get_home_page(self):
@@ -1232,7 +1229,6 @@ class HomePage(WebPage):
 class CollectionPage(WebPage):
     def __init__(self, config):
         self.config = config
-        DAO = config.get_dao_implementation()
         self.dao = DAO(config)
         self.um = URIManager(config)
         
@@ -1254,7 +1250,6 @@ class CollectionPage(WebPage):
 class ItemPage(WebPage):
     def __init__(self, config):
         self.config = config
-        DAO = config.get_dao_implementation()
         self.dao = DAO(config)
         self.um = URIManager(config)
     
