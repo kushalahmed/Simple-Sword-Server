@@ -300,10 +300,10 @@ class Configuration(object):
         c = ""
         for line in f:
             if line.strip().startswith("#"):
-                c+= "\n" # this makes it easier to debug the config
+                c += "\n" # this makes it easier to debug the config
             else:
                 c += line
-        return json.loads(c.replace("\'", '"'))
+        return json.loads(c)
     
     def _create_config_file(self):
         fn = open(self.SSS_CONFIG_FILE, "w")
