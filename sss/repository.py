@@ -11,6 +11,7 @@ from info import __version__
 from sss_logging import logging
 ssslog = logging.getLogger(__name__)
 
+
 class WebInterface(WebUI):
     def get(self, path=None):
         if path is not None:
@@ -147,7 +148,8 @@ class SSS(SwordServer):
         SwordServer.__init__(self, config, auth)
 
         # create a DAO for us to use
-        self.dao = DAO(self.configuration)
+        DAO = config.get_dao_implementation()
+        self.dao = DAO(config)
 
         # create a Namespace object for us to use
         self.ns = Namespaces()
@@ -995,6 +997,9 @@ class DAO(object):
         """ list all the collections in the store """
         return os.listdir(self.configuration.store_dir)
 
+    def get_container_names(self, collection):
+        return os.listdir(self.get_store_path(collection))
+
     def collection_exists(self, collection):
         """
         Does the specified collection exist?
@@ -1208,7 +1213,8 @@ class HomePage(WebPage):
     """
     def __init__(self, config):
         self.config = config
-        self.dao = DAO(self.config)
+        DAO = config.get_dao_implementation()
+        self.dao = DAO(config)
         self.um = URIManager(config)
         
     def get_home_page(self):
@@ -1230,6 +1236,7 @@ class HomePage(WebPage):
 class CollectionPage(WebPage):
     def __init__(self, config):
         self.config = config
+        DAO = config.get_dao_implementation()
         self.dao = DAO(config)
         self.um = URIManager(config)
         
@@ -1237,10 +1244,8 @@ class CollectionPage(WebPage):
         frag = "<h1>Collection: " + id + "</h1>"
         
         # list all of the containers in the collection
-        cpath = self.dao.get_store_path(id)
-        containers = os.listdir(cpath)
         frag += "<h2>Containers</h2><ul>"
-        for container in containers:
+        for container in self.dao.get_container_names(id):
             frag += "<li><a href=\"" + self.um.html_url(id, container) + "\">" + container + "</a></li>"
         frag += "</ul>"
         
@@ -1251,6 +1256,7 @@ class CollectionPage(WebPage):
 class ItemPage(WebPage):
     def __init__(self, config):
         self.config = config
+        DAO = config.get_dao_implementation()
         self.dao = DAO(config)
         self.um = URIManager(config)
     
