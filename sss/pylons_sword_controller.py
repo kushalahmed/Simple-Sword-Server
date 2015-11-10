@@ -131,7 +131,7 @@ class SwordController(WSGIController):
         try:
             # now validate the http headers
             h.validate(mapped_headers, section)
-        except ValidationError as e:
+        except ValidationException as e:
             raise SwordError(error_uri=Errors.bad_request, msg=e.message)
     
     def validate_deposit_request(self, entry_section=None, binary_section=None, multipart_section=None, empty_section=None, allow_multipart=True, allow_empty=False):
@@ -832,7 +832,7 @@ class SwordController(WSGIController):
             
             # did we successfully negotiate a content type?
             if accept_parameters is None:
-                raise SwordError(error_uri=Error.content, status=415, empty=True)
+                raise SwordError(error_uri=Errors.content, status=415, empty=True)
             
             # now actually get hold of the representation of the container and send it to the client
             cont = ss.get_container(path, accept_parameters)

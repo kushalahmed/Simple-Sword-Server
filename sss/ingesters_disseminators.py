@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 from zipfile import ZipFile
 from lxml import etree
-from spec import Namespaces
+from .spec import Namespaces
 
-from sss_logging import logging
+from .sss_logging import logging
 ssslog = logging.getLogger(__name__)
 
 try:

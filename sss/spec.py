@@ -1,7 +1,9 @@
+from __future__ import absolute_import
+
 # FIXME: this covers a lot of constants, so we should consider getting rid of
 # all these extraneous objects and just have dictionaries which can be imported
 
-from sss_logging import logging
+from .sss_logging import logging
 ssslog = logging.getLogger(__name__)
 
 # FIXME: this is a poorly constructed object

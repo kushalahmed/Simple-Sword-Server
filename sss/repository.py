@@ -1,14 +1,14 @@
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import os, hashlib, uuid, urllib
-from core import Statement, DepositResponse, MediaResourceResponse, DeleteResponse, Auth, AuthException, SwordError, ServiceDocument, SDCollection, EntryDocument, Authenticator, SwordServer, WebUI
-from spec import Namespaces, Errors
+from .core import Statement, DepositResponse, MediaResourceResponse, DeleteResponse, Auth, AuthException, SwordError, ServiceDocument, SDCollection, EntryDocument, Authenticator, SwordServer, WebUI
+from .spec import Namespaces, Errors
 from lxml import etree
 from datetime import datetime
 from zipfile import ZipFile
-from negotiator import AcceptParameters, ContentType
-from info import __version__
+from .negotiator import AcceptParameters, ContentType
+from .info import __version__
 
-from sss_logging import logging
+from .sss_logging import logging
 ssslog = logging.getLogger(__name__)
 
 
@@ -1281,7 +1281,8 @@ class ItemPage(WebPage):
     
     def _layout_metadata(self, metadata):
         frag = "<h2>Metadata</h2>"
-        for key, vals in metadata.iteritems():
+        iteritems = getattr(metadata, 'iteritems', getattr(metadata, 'items'))  # Py3 compatibility
+        for key, vals in iteritems():
             frag += "<strong>" + key + "</strong>: " + ", ".join(vals) + "<br/>"
         if len(metadata) == 0:
             frag += "No metadata associated with this item"

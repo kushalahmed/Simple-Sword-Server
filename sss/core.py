@@ -1,10 +1,16 @@
-import uuid, StringIO
+from __future__ import absolute_import
+import uuid
 from lxml import etree
 from datetime import datetime
-from spec import Namespaces, HttpHeaders, Errors
-from info import __version__
+from .spec import Namespaces, HttpHeaders, Errors
+from .info import __version__
 
-from sss_logging import logging
+try:
+    import StringIO
+except ImportError:
+    import io as StringIO
+
+from .sss_logging import logging
 ssslog = logging.getLogger(__name__)
 
 class SwordServer(object):

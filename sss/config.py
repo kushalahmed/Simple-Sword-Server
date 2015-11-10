@@ -1,10 +1,10 @@
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import os, uuid, sys, json
-from ingesters_disseminators import DefaultEntryIngester, DefaultDisseminator, FeedDisseminator, BinaryIngester, SimpleZipIngester, METSDSpaceIngester
-from negotiator import AcceptParameters, ContentType
-from core import SwordServer, Authenticator, DAO, WebUI
+from .ingesters_disseminators import DefaultEntryIngester, DefaultDisseminator, FeedDisseminator, BinaryIngester, SimpleZipIngester, METSDSpaceIngester
+from .negotiator import AcceptParameters, ContentType
+from .core import SwordServer, Authenticator, DAO, WebUI
 
-from sss_logging import logging
+from .sss_logging import logging
 ssslog = logging.getLogger(__name__)
 
 SSS_CONFIG_FILE = "./sss.conf.json"
@@ -172,9 +172,9 @@ DEFAULT_CONFIG = """
     # In this default configuration we use the built-in SSS repository's 
     # implementations for everything
     "sword_server" : "sss.repository.SSS",
-    "dao" : "sss.repository.DAO"
+    "dao" : "sss.repository.DAO",
     "authenticator" : "sss.repository.SSSAuthenticator",
-    "webui" : "sss.repository.WebInterface",
+    "webui" : "sss.repository.WebInterface"
 }
 """
         
