@@ -390,15 +390,15 @@ class ContentNegotiator(object):
         self.weights = weights if weights is not None else {'content_type' : 1.0, 'language' : 1.0, 'charset' : 1.0, 'encoding' : 1.0, 'packaging' : 1.0}
         self.ignore_language_variants = ignore_language_variants
         
-        if not self.weights.has_key("content_type"):
+        if not "content_type" in self.weights:
             self.weights["content_type"] = 1.0
-        if not self.weights.has_key("language"):
+        if not "language" in self.weights:
             self.weights["language"] = 1.0
-        if not self.weights.has_key("charset"):
+        if not "charset" in self.weights:
             self.weights["charset"] = 1.0
-        if not self.weights.has_key("encoding"):
+        if not "encoding" in self.weights:
             self.weights["encoding"] = 1.0
-        if not self.weights.has_key("packaging"):
+        if not "packaging" in self.weights:
             self.weights["packaging"] = 1.0
 
     def negotiate(self, accept=None, accept_language=None, accept_encoding=None, accept_charset=None, accept_packaging=None):
@@ -664,7 +664,7 @@ class ContentNegotiator(object):
         Utility method: if dict d contains key q, then append value v to the array which is identified by that key
         otherwise create a new key with the value of an array with a single value v
         """
-        if d.has_key(q):
+        if q in d:
             d[q].append(v)
         else:
             d[q] = [v]
@@ -703,7 +703,7 @@ class ContentNegotiator(object):
         # get the client requirement keys sorted with the highest q first (the server is a list which should be
         # in order of preference already)
         ckeys = client.keys()
-        ckeys.sort(reverse=True)
+        ckeys = sorted(ckeys, reverse = True)
 
         # the rule for determining what to return is that "the client's preference always wins", so we look for the
         # highest q ranked item that the server is capable of returning.  We only take into account the server's
