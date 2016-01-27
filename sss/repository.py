@@ -114,7 +114,7 @@ class URIManager(object):
 
     def part_uri(self, collection, id, filename):
         """ The URL for accessing the parts of an object in the store """
-        return self.configuration.base_url + "part-uri/" + collection + "/" + id + "/" + urllib.quote(filename)
+        return self.configuration.base_url + "part-uri/" + collection + "/" + id + "/" + urllib.parse.quote(filename)
 
     def agg_uri(self, collection, id):
         return self.configuration.base_url + "agg-uri/" + collection + "/" + id
@@ -272,6 +272,7 @@ class SSS(SwordServer):
         authorname.text = "Simple Sword Server"
 
         # if the collection path does not exist, then return the empty feed
+        #FIXME: get the path from remote swift server
         cpath = os.path.join(self.configuration.store_dir, str(id))
         if not os.path.exists(cpath):
             return etree.tostring(feed, pretty_print=True)
@@ -361,8 +362,14 @@ class SSS(SwordServer):
         s = Statement()
         s.aggregation_uri = agg_uri
         s.rem_uri = edit_uri
-        by = deposit.auth.username if deposit.auth is not None else None
-        obo = deposit.auth.on_behalf_of if deposit.auth is not None else None
+
+        # FIXME: deposit.auth is a bool. It can't have username or on_behalf_of attributes
+        #by = deposit.auth.username if deposit.auth is not None else None
+        #obo = deposit.auth.on_behalf_of if deposit.auth is not None else None
+        # quick fix
+        by = None
+        obo = None
+
         if deposit_uri is not None:
             s.original_deposit(deposit_uri, datetime.now(), deposit.packaging, by, obo)
         s.aggregates = derived_resource_uris
@@ -442,7 +449,11 @@ class SSS(SwordServer):
         
         # call the appropriate packager, and get back the filepath for the response
         packager = self.configuration.get_package_disseminator(accept_parameters.media_format())(self.dao, self.um)
-        mr.filepath = packager.package(collection, id)
+        # FIXME: packager.package returns the file path. It uses ZipFile which can't read remote zip files.
+        # TODO: packager.package must be called to package the contents up.
+        #mr.filepath = packager.package(collection, id)
+        # Quick fix: overriding filepath from self.um
+        mr.filepath = self.um.get_base_url() + self.dao.get_store_path(collection, id = id)
         mr.packaging = packager.get_uri()
         mr.content_type = accept_parameters.content_type.mimetype()
 
@@ -520,8 +531,12 @@ class SSS(SwordServer):
         s.aggregation_uri = agg_uri
         s.rem_uri = edit_uri
         if deposit_uri is not None:
-            by = deposit.auth.username if deposit.auth is not None else None
-            obo = deposit.auth.on_behalf_of if deposit.auth is not None else None
+            # FIXME: deposit.auth is a bool. It can't have username or on_behalf_of attributes
+            #by = deposit.auth.username if deposit.auth is not None else None
+            #obo = deposit.auth.on_behalf_of if deposit.auth is not None else None
+            # quick fix
+            by = None
+            obo = None
             s.original_deposit(deposit_uri, datetime.now(), deposit.packaging, by, obo)
         if state_uri is not None:
             s.add_state(state_uri, state_description)
@@ -897,11 +912,11 @@ class SSS(SwordServer):
         # deposit receipt
         if metadata is None:
             metadata = {}
-        if not metadata.has_key("title"):
+        if not "title" in metadata:
             metadata["title"] = ["SWORD Deposit"]
-        if not metadata.has_key("creator"):
+        if not "creator" in metadata:
             metadata["creator"] = ["SWORD Client"]
-        if not metadata.has_key("abstract"):
+        if not "abstract" in metadata:
             metadata["abstract"] = ["Content deposited with SWORD client"]
 
         packaging = []
@@ -939,9 +954,14 @@ class SSS(SwordServer):
 
     def check_delete_errors(self, delete):
         # have we been asked to do a mediated delete, when this is not allowed?
+
+        # FIXME: delete.auth keeps true/false value. It does not have on_behalf_of attribute.
+        '''
         if delete.auth is not None:
             if delete.auth.on_behalf_of is not None and not self.configuration.mediation:
                 raise SwordError(Errors.mediation_not_allowed)
+        '''
+        return None
 
     def check_deposit_errors(self, deposit):
         # have we been asked for an invalid package format
@@ -957,9 +977,12 @@ class SSS(SwordServer):
                 raise SwordError(error_uri=Errors.checksum_mismatch, msg="Content-MD5 header does not match file checksum")
 
         # have we been asked to do a mediated deposit, when this is not allowed?
-        if deposit.auth is not None:
-            if deposit.auth.on_behalf_of is not None and not self.configuration.mediation:
-                raise SwordError(error_uri=Errors.mediation_not_allowed)
+        # FIXME: delete.auth keeps true/false value. It does not have on_behalf_of attribute.
+        '''
+        if delete.auth is not None:
+            if delete.auth.on_behalf_of is not None and not self.configuration.mediation:
+                raise SwordError(Errors.mediation_not_allowed)
+        '''
 
         return None
 
@@ -1293,7 +1316,7 @@ class ItemPage(WebPage):
         frag += "<table border=\"1\"><tr><th>URI</th><th>deposited on</th><th>format</th><th>deposited by</th><th>on behalf of</th></tr>"
         for uri, deposit_time, format, by, obo in statement.original_deposits:
             frag += "<tr><td><a href=\"" + uri + "\">" + uri + "</a></td><td>" + str(deposit_time) + "</td><td>" + format
-            frag += "</td><td>" + by + "</td><td>" + str(obo) + "</td></tr>"
+            frag += "</td><td>" + str(by) + "</td><td>" + str(obo) + "</td></tr>"
         frag += "</table>"
         frag += "<h2>Derived Files</h2>"
         frag += "<table border=\"1\"><tr><th>URI</th></tr>"
