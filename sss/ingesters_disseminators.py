@@ -58,8 +58,11 @@ class DefaultDisseminator(DisseminationPackager):
         # get a list of the relevant content files
         files = self.dao.list_content(collection, id, exclude=["sword-default-package.zip"])
 
+        '''
+        #FIXME: Not working opening/creating zip file. Creating remote zip file should NOT work anyway.
+        #We should rather gather information about the packe for dissemination from the remote repository server.
         # create a zip file with all the original zip files in it
-        zpath = self.dao.get_store_path(collection, id, "sword-default-package.zip")
+        zpath =  self.dao.get_store_path(collection, id, "sword-default-package.zip")
         z = ZipFile(zpath, "w")
         for file in files:
             z.write(self.dao.get_store_path(collection, id, file), file)
@@ -67,6 +70,10 @@ class DefaultDisseminator(DisseminationPackager):
 
         # return the path to the package to the caller
         return zpath
+        '''
+        # quick fix, returned the names of the files that the resource contains.
+        return files
+
 
 class FeedDisseminator(DisseminationPackager):
     def __init__(self, dao, uri_manager):
@@ -123,17 +130,24 @@ class SimpleZipIngester(IngestPackager):
         
     def ingest(self, collection, id, filename, metadata_relevant=True):
         # First, let's just extract all the contents of the zip
-        z = ZipFile(self.dao.get_store_path(collection, id, filename))
+        # FIXME: ZipFile can't open a zip with a remote repository path.
+        # It should rather fetch an xml file that stores the paths of the content files.
+        #z = ZipFile(self.dao.get_store_path(collection, id, filename))
         
         # keep track of the names of the files in the zip, as these will become
         # our derived resources
-        derived_resources = z.namelist()
+        # FIXME: derived_resources will contain the list of files inside the Zip file.
+        #derived_resources = z.namelist()
+        # quick fix
+        derived_resources = {}
         
         # FIXME: what we do here is intrinsically insecure, but SSS is not a
         # production service, so we're not worrying about it!
         path = self.dao.get_store_path(collection, id)
-        z.extractall(path)
-        
+        # FIXME: extraction must be done by sending appropriate request to repository server
+        # quick fix: doing nothing
+        #z.extractall(path)
+
         # check for the atom document
         atom = self.dao.get_atom_content(collection, id)
         if atom is None:
@@ -211,7 +225,7 @@ class DefaultEntryIngester(object):
         
         ssslog.debug("Existing Metadata (before new ingest): " + str(metadata))
         
-        ssslog.debug("Incoming atom: " + atom)
+        ssslog.debug("Incoming atom: " + str(atom))
         entry = etree.fromstring(atom)
 
         # go through each element in the atom entry and just process the ones we care about
