@@ -748,6 +748,7 @@ class SWORDRequest(object):
         self.slug = None
         self.content_type = None
         self.content_length = 0
+        self.filename = 'noname.file'
 
     def set_from_headers(self, headers):
         for key, value in headers.items():
@@ -768,6 +769,8 @@ class SWORDRequest(object):
                     self.content_type = value
                 elif key == HttpHeaders.content_length:
                     self.content_length = int(value)
+                elif key == HttpHeaders.filename:
+                    self.filename = value
 
     def set_by_header(self, key, value):
         # FIXME: this is a webpy thing....
