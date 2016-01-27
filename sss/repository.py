@@ -77,6 +77,9 @@ class URIManager(object):
             atom = True
         return atom, path
 
+    def get_base_url(self):
+        return self.configuration.base_url
+
     def html_url(self, collection, id=None):
         """ The url for the HTML splash page of an object in the store """
         if id is not None:
