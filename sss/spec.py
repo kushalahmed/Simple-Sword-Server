@@ -89,15 +89,18 @@ class ValidationException(Exception):
         self.message = message
 
 class HttpHeaders(object):
-    content_type = "content-type"
-    content_disposition = "content-disposition"
-    content_md5 = "content-md5"
-    packaging = "packaging"
-    in_progress = "in-progress"
-    on_behalf_of = "on-behalf-of"
-    metadata_relevant = "metadata-relevant"
+    #Kushal: sync the names with the headers received.
+    content_type = "content_type"
+    content_disposition = "http_content_disposition" #Kushal: MANUAL CHANGE
+    content_md5 = "http_content_md5"
+    packaging = "http_packaging"
+    in_progress = "http_in_progress"
+    on_behalf_of = "http_on_behalf_of"
+    metadata_relevant = "http_metadata_relevant"
     slug = "slug"
-    content_length = "content-length"
+    content_length = "content_length"
+    filename = "http_filename"
+
     
     sword_headers = {
         content_type : None,
@@ -107,7 +110,8 @@ class HttpHeaders(object):
         on_behalf_of : None,
         metadata_relevant : "true",
         slug : None,
-        content_length : 0
+        content_length : 0,
+        filename : "noname.file"
     }
     
     allowed_values = {
@@ -189,7 +193,7 @@ class HttpHeaders(object):
     
     def is_allowed_value(self, header, value):
         header = header.lower()
-        if HttpHeaders.allowed_values.has_key(header):
+        if header in HttpHeaders.allowed_values:
             if value.lower() in HttpHeaders.allowed_values[header]:
                 return True
             else:
@@ -197,7 +201,7 @@ class HttpHeaders(object):
         return True
         
     def get_allowed_values(self, header):
-        if HttpHeaders.allowed_values.has_key(header):
+        if header in HttpHeaders.allowed_values:
             return HttpHeaders.allowed_values[header]
         return []
         
@@ -221,11 +225,12 @@ class HttpHeaders(object):
         headers = {}
         for head, value in normalised_dict.items():
             # is it a sword header
-            if HttpHeaders.sword_headers.has_key(head):
+            if head in HttpHeaders.sword_headers:
                 headers[head] = value
         for head, default in HttpHeaders.sword_headers.items():
             if head not in headers.keys():
                 headers[head] = default
+
         return headers
         
     def extract_filename(self, header_dict):
