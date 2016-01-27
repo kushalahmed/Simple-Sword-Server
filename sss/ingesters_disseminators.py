@@ -260,7 +260,7 @@ class DefaultEntryIngester(object):
         self.dao.store_metadata(collection, id, metadata)
 
     def a_insert(self, d, key, value):
-        if d.has_key(key):
+        if key in d:
             vs = d[key]
             if value not in vs:
                 d[key].append(value)
