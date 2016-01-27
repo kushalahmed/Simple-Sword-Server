@@ -193,7 +193,7 @@ class SimpleZipIngester(IngestPackager):
         return derived_resources
         
     def a_insert(self, d, key, value):
-        if d.has_key(key):
+        if key in d:
             vs = d[key]
             if value not in vs:
                 d[key].append(value)
