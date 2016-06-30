@@ -495,7 +495,8 @@ class SSS(SwordServer):
             
             # remove all the old files before adding the new.  We always leave
             # behind the metadata; this will be overwritten later if necessary
-            self.dao.remove_content(collection, id, True, keep_atom)
+            # Kushal: we don't worry about the existing files
+            #self.dao.remove_content(collection, id, True, keep_atom)
 
             # store the content file
             if deposit.filename is None:
@@ -591,7 +592,11 @@ class SSS(SwordServer):
         # remove all the old files before adding the new.
         # notice that we keep the metadata, as this is considered bound to the
         # container and not the media resource.
-        self.dao.remove_content(collection, id, True)
+        # Kushal: we delete media resource only, NOT all the files inside the container
+        #self.dao.remove_content(collection, id, True)
+
+        # Kushal: we delete one media resource only
+        self.dao.remove_media_resource(collection, id, delete.filename)
 
         # the aggregation uri
         agg_uri = self.um.agg_uri(collection, id)
@@ -669,9 +674,12 @@ class SSS(SwordServer):
 
             # An identifier which will resolve to the package just deposited
             deposit_uri = self.um.part_uri(collection, id, fn)
-            
-            by = deposit.auth.username if deposit.auth is not None else None
-            obo = deposit.auth.on_behalf_of if deposit.auth is not None else None
+
+            # Kushal: no auth supported yet
+            # by = deposit.auth.username if deposit.auth is not None else None
+            # obo = deposit.auth.on_behalf_of if deposit.auth is not None else None
+            by = None
+            obo = None
             s.original_deposit(deposit_uri, datetime.now(), deposit.packaging, by, obo)
             
             # a list of identifiers which will resolve to the derived resources
@@ -686,6 +694,10 @@ class SSS(SwordServer):
         
         # store the statement by itself
         self.dao.store_statement(collection, id, s)
+
+        # Kushal: log the existing contents
+        available_contents = self.dao.list_content(collection, id)
+        ssslog.debug("Resources available: " + str(available_contents))
 
         # create the deposit receipt (which involves getting hold of the item's metadata first if it exists
         metadata = self.dao.get_metadata(collection, id)
